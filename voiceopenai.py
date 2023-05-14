@@ -31,7 +31,7 @@ def say_and_print_sentences(text):
 
 if __name__ == '__main__':
     # Set up your OpenAI API credentials
-    openai.api_key = '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'
+    openai.api_key = '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'
     # Create a recognizer object
     r = sr.Recognizer()
     # r.energy_threshold = 500
@@ -77,11 +77,15 @@ if __name__ == '__main__':
                 continue
 
         # Generate text using the completions API
-        response = openai.Completion.create(
-            engine='text-davinci-003',
-            prompt=text,
-            max_tokens=1000
-        )
+        # try:
+            response = openai.Completion.create(
+                engine='text-davinci-003',
+                prompt=text,
+                max_tokens=1000
+            )
+        # except Exception:
+        #     say_and_print_sentences("chat API issue. Say again")
+        #     continue
 
         # Get the generated text from the API response
         generated_text = response.choices[0].text.strip()
