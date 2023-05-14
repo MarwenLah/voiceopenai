@@ -1,4 +1,5 @@
 import re
+import time
 
 import openai
 import pyttsx3
@@ -31,27 +32,33 @@ def say_and_print_sentences(text):
 
 if __name__ == '__main__':
     # Set up your OpenAI API credentials
-    openai.api_key = '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'
+    openai.api_key = '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'
     # Create a recognizer object
     r = sr.Recognizer()
-    # r.energy_threshold = 500
-    r.phrase_threshold = 0.1
-    r.pause_threshold = 1
+    r.energy_threshold = 3000
+    # r.phrase_threshold = 0.1
+    # r.pause_threshold = 1
     # Read input from the user
     last_text_cached = ''
     enabled = True
+    microphone = sr.Microphone()
     while True:
 
         # Use the default microphone as the audio source
-        with sr.Microphone() as source:
+        with microphone as source:
             print("Say something...")
 
             # Capture the audio
+            start_time_audio = time.time()
             audio = r.listen(source, timeout=5)
+            print("end capture audio after : " + str(round(time.time() - start_time_audio, 1)) + " seconds")
+
 
             # Recognize speech using Google Speech Recognition
             try:
+                start_time = time.time()
                 text = r.recognize_google(audio)
+                print("end recoginition after : " + str(round(time.time() - start_time, 1)) + " seconds")
                 lower_text = str(text).lower()
                 if lower_text == "enable":
                     enabled = True
@@ -78,11 +85,14 @@ if __name__ == '__main__':
 
         # Generate text using the completions API
         # try:
-            response = openai.Completion.create(
-                engine='text-davinci-003',
-                prompt=text,
-                max_tokens=1000
-            )
+        start_time_openai = time.time()
+        response = openai.Completion.create(
+            engine='text-davinci-003',
+            prompt=text,
+            max_tokens=100
+        )
+        print("end chatgpt call after : " + str(round(time.time() - start_time_openai, 1)) + " seconds")
+
         # except Exception:
         #     say_and_print_sentences("chat API issue. Say again")
         #     continue
